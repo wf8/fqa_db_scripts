@@ -27,10 +27,62 @@ with open('../databases/eastern_washington_mountains.csv', 'rbU') as csv_input:
 				scientific_name = scientific_name.replace('&', '')
 				
 				# determine wetness
-				wetness = 'test'
+				# -5 = Obligate Wetland = OBL
+				# -4 = Facultative Wetland+ = FACW+
+				# -3 = Facultative Wetland = FACW
+				# -2 = Facultative Wetland- = FACW-
+				# -1 = Facultative+ = FAC+
+				# 0 = Facultative = FAC
+				# 1 = Facultative- = FAC-
+				# 2 = Facultative Upland+ = FACU+
+				# 3 = Facultative Upland = FACU
+				# 4 = Facultative Upland- = FACU-
+				# 5 = Upland = UPL
+				wetness_status = { 'OBL': -5,
+								   'FACW+': -4,
+								   'FACW': -3,
+								   'FACW-': -2,
+								   'FAC+': -1,
+								   'FAC': 0,
+								   'FAC-': 1,
+								   'FACU+': 2,
+								   'FACU': 3,
+								   'FACU-': 4,
+								   'UPL': 5,
+								 }
+				wetness = wetness_status.get(row[8], 0)			
 				
 				# determine physiognomy
-				physiognomy = 'test'
+				# valid values: "fern", "forb", "grass", "rush", "sedge", "shrub", "tree", "vine", or "bryophyte"
+				# treat all graminoids as grass
+				physiognomy = row[4].lower()
+				if 'tree' in physiognomy:
+					physiognomy = 'tree'
+				elif 'shrub' in physiognomy:
+					physiognomy = 'shrub'
+				elif 'vine' in physiognomy:
+					physiognomy = 'vine'
+				elif 'fern' in physiognomy:
+					physiognomy = 'fern'
+				elif 'forb' in physiognomy:
+					physiognomy = 'forb'
+				elif 'graminoid' in physiognomy:
+					physiognomy = 'grass'
+				else:
+					physiognomy = 'forb'
+					
+				if 'Cyperaceae' in row[5]:
+					physiognomy = 'sedge'
+				if 'Juncaceae' in row[5]:
+					physiognomy = 'rush'
+				
+				# determine duration
+				if 'perennial' in row[7].lower():
+					duration = 'perennial'
+				elif 'annual' in row[7].lower():
+					duration = 'annual'
+				elif 'biennial' in row[7].lower():
+					duration = 'biennial'
 				
 				# write cvs row
-				cvswriter.writerow([scientific_name, row[5], '', row[6], row[0], wetness, physiognomy, row[7].lower(),''])
+				cvswriter.writerow([scientific_name, row[5], '', row[6], row[0], wetness, physiognomy, duration,''])
