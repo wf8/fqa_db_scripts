@@ -3,7 +3,7 @@ import os
 import csv
 
 """
-format the eastern washington mountains csv file for upload
+formats the eastern Washington Mountains csv file for upload
 """
 
 with open('../databases/eastern_washington_mountains.csv', 'rbU') as csv_input:
